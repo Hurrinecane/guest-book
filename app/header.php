@@ -1,10 +1,10 @@
 <?php
-require_once 'include/database.php';
+require_once 'include/configs.php';
 require_once 'include/functions.php';
 
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+// ini_set('error_reporting', E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
 ?>
 <!DOCTYPE html>
 <html lang="en">

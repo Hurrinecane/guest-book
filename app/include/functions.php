@@ -3,22 +3,23 @@
 function get_messages($sortType, $page)
 {
     global $link;
-    $page *=25;
+    mysqli_real_escape_string($link, trim(strip_tags($page *=25)));
+    mysqli_real_escape_string($link, trim(strip_tags($sortType)));
     switch ($sortType) {
         case 'NameUp':
-            $sql = "SELECT * FROM `messages` ORDER BY `Name`";
+            $sql = "SELECT * FROM `messages` ORDER BY `Name` LIMIT $page, 25";
             break;
         case 'NameDown':
-            $sql = "SELECT * FROM `messages` ORDER BY `Name` DESC";
+            $sql = "SELECT * FROM `messages` ORDER BY `Name` DESC LIMIT $page, 25";
             break;
         case 'EmailUp':
-            $sql = "SELECT * FROM `messages` ORDER BY `E-mail`";
+            $sql = "SELECT * FROM `messages` ORDER BY `E-mail` LIMIT $page, 25";
             break;
         case 'EmailDown':
-            $sql = "SELECT * FROM `messages` ORDER BY `E-mail` DESC";
+            $sql = "SELECT * FROM `messages` ORDER BY `E-mail` DESC LIMIT $page, 25";
             break;
         case 'TimeUp':
-            $sql = "SELECT * FROM `messages` ORDER BY `Time`";
+            $sql = "SELECT * FROM `messages` ORDER BY `Time` LIMIT $page, 25";
             break;
         case 'TimeDown':
         default:
@@ -30,22 +31,26 @@ function get_messages($sortType, $page)
     $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
     return $data;
 }
+function get_ip_list()
+{
+	
+}
 
 function getIp()
 {
-    $keys = [
-        'HTTP_CLIENT_IP',
-        'HTTP_X_FORWARDED_FOR',
-        'REMOTE_ADDR'
-    ];
-    foreach ($keys as $key) {
-        if (!empty($_SERVER[$key])) {
-            $ip = trim(end(explode(',', $_SERVER[$key])));
-            if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                return $ip;
-            }
-        }
-    }
+    $list = array();
+	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+		$ip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+		$list = array_merge($list, $ip);
+	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		$ip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+		$list = array_merge($list, $ip);
+	} elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+		$list[] = $_SERVER['REMOTE_ADDR'];
+	}
+	
+	$list = array_unique($list);
+	return implode(',', $list);
 }
 
 function get_user_agent()

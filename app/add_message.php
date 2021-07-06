@@ -1,5 +1,5 @@
 <?php
-require_once 'include/database.php';
+require_once 'include/configs.php';
 require_once 'include/functions.php';
 
 $header = 'Location: /?message=';
@@ -8,12 +8,12 @@ if (isset($_POST['g-recaptcha-response'])) $captcha_response = $_POST['g-recaptc
 else die('На форме нет капчи! Обратитесь к администратору!');
 
 $url = 'https://www.google.com/recaptcha/api/siteverify';
+global $secret;
 $params = [
-    'secret' => '6LfShHkbAAAAAGCf0SbMe5X3HACMcgbaA_I_v09V',
+    'secret' => $secret,
     'response' => $captcha_response,
     'remoteip' => $_SERVER['REMOTE_ADDR']
 ];
-
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
@@ -34,7 +34,7 @@ if ($success) {
 
     global $link;
     if (isset($_POST["Name"]))
-        $name = $_POST["Name"];
+        $name =  mysqli_real_escape_string($link, trim(strip_tags($_POST["Name"])));
     if (isset($_POST["E-mail"]))
         $email = mysqli_real_escape_string($link, trim(strip_tags($_POST["E-mail"])));
     if (isset($_POST["Site"]))
@@ -47,7 +47,8 @@ if ($success) {
     $user_agent = get_user_agent();
 
 
-    $sql = "INSERT INTO `messages` (`Name`, `E-mail`, `Site`, `Text`, `IP`, `USER_AGENT`) VALUES ('$name', '$email', '$site', '$text', '$ip', '$user_agent')";
+    $sql = "INSERT INTO `messages` (`Name`, `E-mail`, `Site`, `Text`, `IP`, `USER_AGENT`) 
+            VALUES ('$name', '$email', '$site', '$text', '$ip', '$user_agent')";
     $result = mysqli_query($link, $sql);
 
     if ($result)

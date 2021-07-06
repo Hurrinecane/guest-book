@@ -1,6 +1,9 @@
 <?php require_once 'app/header.php'; ?>
 
-<?php $messages = get_messages($_GET['sortType'], $_GET['page']); ?>
+<?php
+if (!isset($_GET['page']))  $_GET['page'] = 0;
+if (!isset($_GET['sortType']))  $_GET['sortType'] = 'TimeDown';
+$messages = get_messages($_GET['sortType'], $_GET['page']); ?>
 
 <div class="container-xxl">
     <table class=" table table-sm table-striped">
@@ -28,8 +31,8 @@
             <?php endforeach; ?>
         </tbody>
     </table>
-    <span><a href="/?page=<?=$_GET['page']> 0? $_GET['page']-1 : 0?>">prev page</a></span>
-    <span><a href="/?page=<?=$_GET['page']+1?>">next page</a></span>
+    <span><a href="/?sortType=<?=$_GET['sortType']?>&page=<?= $_GET['page'] > 0 ? $_GET['page'] - 1 : 0 ?>">prev page</a></span>
+    <span><a href="/?sortType=<?=$_GET['sortType']?>&page=<?= $_GET['page'] + 1 ?>">next page</a></span>
     <br>
     <br>
     <form action="app/add_message.php" method="POST">
